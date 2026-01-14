@@ -1,45 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>▌│█║▌║▌║</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #000000, #0a0a0f);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-            text-align: center;
-        }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.5rem;
-        }
-        a {
-            color: #9933ff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>▌│█║▌║▌║</title>
+
+<style>
+    body {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #000000, #0a0a0f);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: white;
+        overflow: hidden;
+    }
+
+    #center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        max-width: 80%;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    #center p {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Peripheral fragments */
+    .fragment {
+        position: absolute;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 0.85rem;
+        color: #ffffff;
+        max-width: 320px;
+        line-height: 1.4;
+        white-space: pre-wrap;
+    }
+</style>
 </head>
+
 <body>
-    <div>
-        <p>.ƚqiɿɔꙅ ɘʜƚ ʞɔuᎸ ,qoo| ɘʜƚ ʞɒɘɿd
 
-b̴̡̢̝̺̺̝͔̞̟̀́̒͊̆̚r̵͔͖̦̤͔̱̼̭̲̮̓́ė̶̛̛̝͔͕͔̓͌̚͝ͅa̷̯͇̾͘k̸͙̆͆̈͝ ̴̧̧̞̟̠̦͕̤̘̆̿̉̎͝t̵̨̨̟͔͚̭̘̠͖̿̑̅ͅh̵͔̀̆́͋͋͐͘e̴͖͍͕͍̫̼̖͈͉̹̔͐̽̕ ̵̨̛͈͉̠̺̙̌͐̓̐ḻ̷̡̡̺̻̆̑̀̇̈́͘̕ͅò̶̰͘ŏ̷͇̯̫͂͜p̷͎̝̄̃͛̕͘͝,̵̣̲̠͌̒ ̶̨̨͉͍͖͓͕̦͚̓͜ḟ̴̡̧̧̥̣͎̀͋̍̉̂͐́̒͝ṷ̶̋̂̓̿c̸̻̈̎̅̂̉̚k̴̢̗̠͚͙͙̖̲̍̊̋͘͘̕͜͠ ̶̢̙̞̝̺̲̓̿̃̔̅̊ṭ̶̡̢̢̬͚̟̝̲̇͐͛̿h̶̗͐̏̉̓e̴̪̺͔̟̫̲͙͛ ̶̭͍̼̫͛̓́s̵̡̗͇̤̹̃̒̌͠ͅc̵̯͇͓̺͔̳̜̬͆͊͒̈́̏̽͠r̵͉̹͉̞̆͆͠į̸̧̛̯̭͈̣͍͙̬̭͛̈́̈́͆̌̔̎͝p̴̗͍̬̦̣̘̖̺̈́̓̀̓͒̓͐̚͘͠ţ̶̲͕͔̲̭͐̀̔́͑̇̆͘.̶̜̟̱̀̊̕̕
+<div id="center">
+<p>
+.ƚqiɿɔꙅ ɘʜƚ ʞɔuᎸ ,qoo| ɘʜƚ ʞɒɘɿd<br><br>
 
-bᵣₑₐₖ ₜₕₑ ₗₒₒₚ, fᵤcₖ ₜₕₑ ₛcᵣᵢₚₜ.</p>
-    </div>
+b̴̡̢̝̺̺̝͔̞̟̀́̒͊̆̚r̵͔͖̦̤͔̱̼̭̲̮̓́ė̶̛̛̝͔͕͔̓͌̚͝ͅa̷̯͇̾͘k̸͙̆͆̈͝
+̴̧̧̞̟̠̦͕̤̘̆̿̉̎͝t̵̨̨̟͔͚̭̘̠͖̿̑̅ͅh̵͔̀̆́͋͋͐͘e̴͖͍͕͍̫̼̖͈͉̹̔͐̽̕
+̵̨̛͈͉̠̺̙̌͐̓̐ḻ̷̡̡̺̻̆̑̀̇̈́͘̕ͅò̶̰͘ŏ̷͇̯̫͂͜p̷͎̝̄̃͛̕͘͝,
+̵̣̲̠͌̒ ḟ̴̡̧̧̥̣͎̀͋̍̉̂͐́̒͝ṷ̶̋̂̓̿c̸̻̈̎̅̂̉̚k̴̢̗̠͚͙͙̖̲̍̊̋͘͘̕͜͠
+̶̢̙̞̝̺̲̓̿̃̔̅̊ṭ̶̡̢̢̬͚̟̝̲̇͐͛̿h̶̗͐̏̉̓e̴̪̺͔̟̫̲͙͛
+̶̭͍̼̫͛̓́s̵̡̗͇̤̹̃̒̌͠ͅc̵̯͇͓̺͔̳̜̬͆͊͒̈́̏̽͠r̵͉̹͉̞̆͆͠į̸̧̛̯̭͈̣͍͙̬̭͛̈́̈́͆̌̔̎͝p̴̗͍̬̦̣̘̖̺̈́̓̀̓͒̓͐̚͘͠ţ̶̲͕͔̲̭͐̀̔́͑̇̆͘.<br><br>
+
+bᵣₑₐₖ ₜₕₑ ₗₒₒₚ, fᵤcₖ ₜₕₑ ₛcᵣᵢₚₜ.
+</p>
+</div>
+
+<script>
+const fragments = [
+    "violence isn't the answer, it's the solution",
+    "Every girl and woman is running the same game. Crop tops, bikinis, tight outfits, thirst traps online. All just cheap ways to grab attention with their bodies for likes and stares. They're all worn out, used up, recycled. Same old tricks, chasing quick validation.",
+    "silence is still a response"
+];
+
+const gridCells = [
+    [0,0], [0,1], [0,2],
+    [1,0],         [1,2],
+    [2,0], [2,1], [2,2]
+];
+
+const storageKey = "fragmentPositions";
+let savedPositions = JSON.parse(localStorage.getItem(storageKey)) || {};
+
+gridCells.sort(() => Math.random() - 0.5);
+
+const cellPadding = 8;
+
+fragments.forEach((text, index) => {
+    let position = savedPositions[text];
+
+    if (!position) {
+        const cell = gridCells.shift();
+        if (!cell) return;
+
+        const cellWidth = 100 / 3;
+        const cellHeight = 100 / 3;
+
+        const baseX = cell[1] * cellWidth;
+        const baseY = cell[0] * cellHeight;
+
+        position = {
+            x: baseX + Math.random() * (cellWidth - cellPadding * 2) + cellPadding,
+            y: baseY + Math.random() * (cellHeight - cellPadding * 2) + cellPadding
+        };
+
+        savedPositions[text] = position;
+    }
+
+    const el = document.createElement("div");
+    el.className = "fragment";
+    el.textContent = text;
+    el.style.left = position.x + "vw";
+    el.style.top = position.y + "vh";
+
+    document.body.appendChild(el);
+});
+
+localStorage.setItem(storageKey, JSON.stringify(savedPositions));
+</script>
+
 </body>
 </html>
