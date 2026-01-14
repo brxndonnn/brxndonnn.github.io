@@ -33,7 +33,6 @@
         margin: 0;
     }
 
-    /* Peripheral fragments */
     .fragment {
         position: absolute;
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -76,44 +75,42 @@ const gridCells = [
     [2,0], [2,1], [2,2]
 ];
 
-const storageKey = "fragmentPositions";
-let savedPositions = JSON.parse(localStorage.getItem(storageKey)) || {};
-
-gridCells.sort(() => Math.random() - 0.5);
+const storageKey = "fragmentLayout";
+let saved = JSON.parse(localStorage.getItem(storageKey)) || {};
 
 const cellPadding = 8;
+const cellWidth = 100 / 3;
+const cellHeight = 100 / 3;
 
 fragments.forEach((text, index) => {
-    let position = savedPositions[text];
+    let data = saved[text];
 
-    if (!position) {
-        const cell = gridCells.shift();
+    if (!data) {
+        const cell = gridCells[index];
         if (!cell) return;
 
-        const cellWidth = 100 / 3;
-        const cellHeight = 100 / 3;
-
-        const baseX = cell[1] * cellWidth;
-        const baseY = cell[0] * cellHeight;
-
-        position = {
-            x: baseX + Math.random() * (cellWidth - cellPadding * 2) + cellPadding,
-            y: baseY + Math.random() * (cellHeight - cellPadding * 2) + cellPadding
+        data = {
+            cell,
+            offsetX: Math.random() * (cellWidth - cellPadding * 2) + cellPadding,
+            offsetY: Math.random() * (cellHeight - cellPadding * 2) + cellPadding
         };
 
-        savedPositions[text] = position;
+        saved[text] = data;
     }
+
+    const x = data.cell[1] * cellWidth + data.offsetX;
+    const y = data.cell[0] * cellHeight + data.offsetY;
 
     const el = document.createElement("div");
     el.className = "fragment";
     el.textContent = text;
-    el.style.left = position.x + "vw";
-    el.style.top = position.y + "vh";
+    el.style.left = x + "vw";
+    el.style.top = y + "vh";
 
     document.body.appendChild(el);
 });
 
-localStorage.setItem(storageKey, JSON.stringify(savedPositions));
+localStorage.setItem(storageKey, JSON.stringify(saved));
 </script>
 
 </body>
