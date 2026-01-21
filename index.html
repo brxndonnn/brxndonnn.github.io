@@ -62,11 +62,22 @@
 </div>
 
 <script>
-/* ===== GLITCH BACKGROUND (TEAR-BOOSTED) ===== */
+/* ===== DEVICE-AWARE GLITCH BACKGROUND ===== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d", { alpha: false });
 
 let W, H, dpr;
+
+/* ---- DEVICE DETECTION ---- */
+const isMobile = matchMedia(
+  "(pointer: coarse), (max-width: 768px)"
+).matches;
+
+/* ---- TUNED VALUES ---- */
+const TEAR_ALPHA = isMobile ? 0.45 : 0.22;
+const TEAR_HEIGHT = isMobile ? 5 : 3;
+const TEAR_FREQ = isMobile ? 0.75 : 0.55;
+const TEAR_SHIFT = isMobile ? 260 : 180;
 
 function resize() {
   dpr = Math.max(1, Math.min(2, devicePixelRatio || 1));
@@ -85,24 +96,23 @@ function glitch() {
   for (let i = 0; i < slices; i++) {
     const h = (8 + Math.random() * 45) * dpr;
     const y = Math.random() * (H - h);
-    const shift = (-90 + Math.random() * 180) * dpr;
+    const shift = (-TEAR_SHIFT/2 + Math.random() * TEAR_SHIFT) * dpr;
     ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
   }
 
-  /* BRIGHTER SCREEN TEAR */
-  if (Math.random() < 0.55) {
+  /* ADAPTIVE SCREEN TEAR */
+  if (Math.random() < TEAR_FREQ) {
     const y = Math.random() * H;
-    ctx.fillStyle = "rgba(255,255,255,0.22)";
-    ctx.fillRect(0, y, W, 3 * dpr);
+    ctx.fillStyle = `rgba(255,255,255,${TEAR_ALPHA})`;
+    ctx.fillRect(0, y, W, TEAR_HEIGHT * dpr);
   }
 }
 
 function frame() {
-  // fade
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, W, H);
 
-  // gray glitch blocks (unchanged)
+  // glitch blocks (unchanged)
   if (Math.random() < 0.28) {
     const v = 190 + Math.random() * 60 | 0;
     ctx.fillStyle = `rgba(${v},${v},${v},0.12)`;
@@ -121,6 +131,7 @@ function frame() {
 
 frame();
 
+// tap/click burst
 addEventListener("pointerdown", () => {
   for (let i = 0; i < 4; i++) glitch();
 });
