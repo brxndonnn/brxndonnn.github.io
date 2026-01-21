@@ -10,10 +10,17 @@
         margin: 0;
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(135deg, #000000, #0a0a0f);
+        background: #000; /* CHANGED: canvas background */
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: white;
         overflow: hidden;
+    }
+
+    canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        image-rendering: pixelated;
     }
 
     #center {
@@ -41,17 +48,71 @@
         max-width: 320px;
         line-height: 1.4;
         white-space: pre-wrap;
+        z-index: 10;
     }
 </style>
 </head>
 
 <body>
 
+<canvas id="bg"></canvas>
+
 <div id="center">
 <p>ʷʰᵃᵗ'ˢ ᵗʰᵉ ᵖᵒⁱⁿᵗ?</p>
 </div>
 
 <script>
+
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d", { alpha: false });
+let W, H, dpr;
+
+function resize() {
+  dpr = Math.max(1, Math.min(2, devicePixelRatio || 1));
+  W = Math.floor(innerWidth * dpr);
+  H = Math.floor(innerHeight * dpr);
+  canvas.width = W;
+  canvas.height = H;
+  ctx.imageSmoothingEnabled = false;
+}
+addEventListener("resize", resize);
+resize();
+
+function glitch() {
+  const slices = 3 + (Math.random() * 7 | 0);
+  for (let i = 0; i < slices; i++) {
+    const h = (6 + Math.random() * 40) * dpr;
+    const y = Math.random() * (H - h);
+    const shift = (-60 + Math.random() * 120) * dpr;
+    ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
+  }
+}
+
+function frame() {
+  ctx.fillStyle = "rgba(0,0,0,0.1)";
+  ctx.fillRect(0, 0, W, H);
+
+  if (Math.random() < 0.18) {
+    const v = 140 + Math.random() * 80 | 0;
+    ctx.fillStyle = `rgba(${v},${v},${v},0.06)`;
+    ctx.fillRect(
+      Math.random() * W,
+      Math.random() * H,
+      Math.random() * 240 * dpr,
+      Math.random() * 50 * dpr
+    );
+  }
+
+  if (Math.random() < 0.07) glitch();
+
+  requestAnimationFrame(frame);
+}
+frame();
+
+</script>
+
+<script>
+
 const fragments = [
 ];
 
