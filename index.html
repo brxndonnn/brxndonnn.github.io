@@ -10,7 +10,7 @@
         margin: 0;
         width: 100vw;
         height: 100vh;
-        background: #000; /* CHANGED: canvas background */
+        background: #000;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: white;
         overflow: hidden;
@@ -62,9 +62,10 @@
 </div>
 
 <script>
-
+/* ===== GLITCH BACKGROUND (OLED-VISIBLE) ===== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d", { alpha: false });
+
 let W, H, dpr;
 
 function resize() {
@@ -79,40 +80,55 @@ addEventListener("resize", resize);
 resize();
 
 function glitch() {
-  const slices = 3 + (Math.random() * 7 | 0);
+  const slices = 4 + (Math.random() * 7 | 0);
+
   for (let i = 0; i < slices; i++) {
-    const h = (6 + Math.random() * 40) * dpr;
+    const h = (8 + Math.random() * 45) * dpr;
     const y = Math.random() * (H - h);
-    const shift = (-60 + Math.random() * 120) * dpr;
+    const shift = (-90 + Math.random() * 180) * dpr;
     ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
+  }
+
+  // faint white tear line
+  if (Math.random() < 0.4) {
+    const y = Math.random() * H;
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.fillRect(0, y, W, 2 * dpr);
   }
 }
 
 function frame() {
+  // fade
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, W, H);
 
-  if (Math.random() < 0.18) {
-    const v = 140 + Math.random() * 80 | 0;
-    ctx.fillStyle = `rgba(${v},${v},${v},0.06)`;
+  // brighter gray glitch blocks (mobile friendly)
+  if (Math.random() < 0.28) {
+    const v = 190 + Math.random() * 60 | 0;
+    ctx.fillStyle = `rgba(${v},${v},${v},0.12)`;
     ctx.fillRect(
       Math.random() * W,
       Math.random() * H,
-      Math.random() * 240 * dpr,
-      Math.random() * 50 * dpr
+      Math.random() * 260 * dpr,
+      Math.random() * 60 * dpr
     );
   }
 
-  if (Math.random() < 0.07) glitch();
+  if (Math.random() < 0.08) glitch();
 
   requestAnimationFrame(frame);
 }
+
 frame();
 
+// tap/click = hard glitch burst
+addEventListener("pointerdown", () => {
+  for (let i = 0; i < 4; i++) glitch();
+});
 </script>
 
 <script>
-
+/* ===== YOUR ORIGINAL LOGIC (UNCHANGED) ===== */
 const fragments = [
 ];
 
