@@ -62,7 +62,7 @@
 </div>
 
 <script>
-/* ===== GLITCH BACKGROUND (OLED-VISIBLE) ===== */
+/* ===== GLITCH BACKGROUND (TEAR-BOOSTED) ===== */
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d", { alpha: false });
 
@@ -89,11 +89,11 @@ function glitch() {
     ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
   }
 
-  // faint white tear line
-  if (Math.random() < 0.4) {
+  /* BRIGHTER SCREEN TEAR */
+  if (Math.random() < 0.55) {
     const y = Math.random() * H;
-    ctx.fillStyle = "rgba(255,255,255,0.08)";
-    ctx.fillRect(0, y, W, 2 * dpr);
+    ctx.fillStyle = "rgba(255,255,255,0.22)";
+    ctx.fillRect(0, y, W, 3 * dpr);
   }
 }
 
@@ -102,7 +102,7 @@ function frame() {
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, W, H);
 
-  // brighter gray glitch blocks (mobile friendly)
+  // gray glitch blocks (unchanged)
   if (Math.random() < 0.28) {
     const v = 190 + Math.random() * 60 | 0;
     ctx.fillStyle = `rgba(${v},${v},${v},0.12)`;
@@ -121,7 +121,6 @@ function frame() {
 
 frame();
 
-// tap/click = hard glitch burst
 addEventListener("pointerdown", () => {
   for (let i = 0; i < 4; i++) glitch();
 });
