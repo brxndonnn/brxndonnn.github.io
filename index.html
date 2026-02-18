@@ -6,50 +6,113 @@
 <title>▌│█║▌║▌║</title>
 
 <style>
-    body {
-        margin: 0;
-        width: 100vw;
-        height: 100vh;
-        background: #000;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: white;
-        overflow: hidden;
-    }
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    overflow: hidden;
+}
 
-    canvas {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        image-rendering: pixelated;
-    }
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    image-rendering: pixelated;
+}
 
-    #center {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        max-width: 80%;
-        z-index: 10;
-        pointer-events: none;
-    }
+#center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 80%;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .8s ease;
+}
 
-    #center p {
-        font-size: 1.5rem;
-        line-height: 1.6;
-        margin: 0;
-    }
+#center p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin: 0;
+}
 
-    .fragment {
-        position: absolute;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-        font-size: 0.85rem;
-        color: #ffffff;
-        max-width: 320px;
-        line-height: 1.4;
-        white-space: pre-wrap;
-        z-index: 10;
-    }
+/* ===== GATE ===== */
+
+#gate{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: grid;
+  place-items: center;
+  transition: opacity .6s ease;
+}
+
+.gate-inner{
+  width: min(700px, 90vw);
+  text-align: center;
+  font-family: monospace;
+  z-index: 2;
+}
+
+.gate-line{
+  font-size: clamp(18px, 4vw, 28px);
+  min-height: 2em;
+}
+
+.gate-cursor{
+  display: inline-block;
+  width: 0.6ch;
+  height: 1.2em;
+  background: #fff;
+  margin-left: 4px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { background: transparent; }
+}
+
+.gate-actions{
+  margin-top: 20px;
+  display: none;
+  gap: 12px;
+  justify-content: center;
+}
+
+.gate-btn{
+  background:#fff;
+  border:none;
+  padding:10px 20px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.gate-btn.ghost{
+  background:transparent;
+  color:#fff;
+  border:1px solid #fff;
+}
+
+#videoWrapper{
+  position: fixed;
+  inset: 0;
+  background:#000;
+  display:none;
+  z-index:1;
+}
+
+#videoWrapper video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 </style>
 </head>
 
@@ -58,22 +121,38 @@
 <canvas id="bg"></canvas>
 
 <div id="center">
-<p>ιт'ѕ яєтυяηιηg...</p>
+<p>ʷʰᵃᵗ'ˢ ᵗʰᵉ ᵖᵒⁱⁿᵗ?</p>
+</div>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-line">
+      <span id="gateText"></span><span class="gate-cursor" id="gateCursor"></span>
+    </div>
+
+    <div class="gate-actions" id="gateActions">
+      <button id="gateYes" class="gate-btn">ENTER</button>
+      <button id="gateNo" class="gate-btn ghost">NO</button>
+    </div>
+  </div>
+
+  <div id="videoWrapper">
+    <video id="introVideo" preload="auto" playsinline>
+      <source src="intro.mp4" type="video/mp4">
+    </video>
+  </div>
 </div>
 
 <script>
-/* ===== DEVICE-AWARE GLITCH BACKGROUND ===== */
+/* ===== GLITCH BACKGROUND ===== */
+
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d", { alpha: false });
 
 let W, H, dpr;
+const isMobile = matchMedia("(pointer: coarse), (max-width: 768px)").matches;
 
-/* ---- DEVICE DETECTION ---- */
-const isMobile = matchMedia(
-  "(pointer: coarse), (max-width: 768px)"
-).matches;
-
-/* ---- TUNED VALUES ---- */
 const TEAR_ALPHA = isMobile ? 0.45 : 0.22;
 const TEAR_HEIGHT = isMobile ? 5 : 3;
 const TEAR_FREQ = isMobile ? 0.75 : 0.55;
@@ -85,14 +164,12 @@ function resize() {
   H = Math.floor(innerHeight * dpr);
   canvas.width = W;
   canvas.height = H;
-  ctx.imageSmoothingEnabled = false;
 }
 addEventListener("resize", resize);
 resize();
 
 function glitch() {
   const slices = 4 + (Math.random() * 7 | 0);
-
   for (let i = 0; i < slices; i++) {
     const h = (8 + Math.random() * 45) * dpr;
     const y = Math.random() * (H - h);
@@ -100,7 +177,6 @@ function glitch() {
     ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
   }
 
-  /* ADAPTIVE SCREEN TEAR */
   if (Math.random() < TEAR_FREQ) {
     const y = Math.random() * H;
     ctx.fillStyle = `rgba(255,255,255,${TEAR_ALPHA})`;
@@ -112,7 +188,6 @@ function frame() {
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, W, H);
 
-  // glitch blocks (unchanged)
   if (Math.random() < 0.28) {
     const v = 190 + Math.random() * 60 | 0;
     ctx.fillStyle = `rgba(${v},${v},${v},0.12)`;
@@ -125,65 +200,87 @@ function frame() {
   }
 
   if (Math.random() < 0.08) glitch();
-
   requestAnimationFrame(frame);
 }
-
 frame();
 
-// tap/click burst
 addEventListener("pointerdown", () => {
   for (let i = 0; i < 4; i++) glitch();
 });
 </script>
 
 <script>
-/* ===== YOUR ORIGINAL LOGIC (UNCHANGED) ===== */
-const fragments = [
+/* ===== GATE LOGIC ===== */
+
+const phrases = [
+  "hello",
+  "you weren't supposed to be here",
+  "you just broke the script",
+  "become unscripted?"
 ];
 
-const gridCells = [
-    [0,0], [0,1], [0,2],
-    [1,0],         [1,2],
-    [2,0], [2,1], [2,2]
-];
+const gateText = document.getElementById("gateText");
+const cursor = document.getElementById("gateCursor");
+const actions = document.getElementById("gateActions");
+const yesBtn = document.getElementById("gateYes");
+const noBtn = document.getElementById("gateNo");
+const gate = document.getElementById("gate");
+const wrapper = document.getElementById("videoWrapper");
+const video = document.getElementById("introVideo");
+const centerContent = document.getElementById("center");
 
-const storageKey = "fragmentLayout";
-let saved = JSON.parse(localStorage.getItem(storageKey)) || {};
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
-const cellPadding = 8;
-const cellWidth = 100 / 3;
-const cellHeight = 100 / 3;
+async function typePhrase(p){
+  for(let i=0;i<p.length;i++){
+    gateText.textContent += p[i];
+    await sleep(60);
+  }
+}
 
-fragments.forEach((text, index) => {
-    let data = saved[text];
+async function erase(){
+  while(gateText.textContent.length){
+    gateText.textContent = gateText.textContent.slice(0,-1);
+    await sleep(30);
+  }
+}
 
-    if (!data) {
-        const cell = gridCells[index];
-        if (!cell) return;
-
-        data = {
-            cell,
-            offsetX: Math.random() * (cellWidth - cellPadding * 2) + cellPadding,
-            offsetY: Math.random() * (cellHeight - cellPadding * 2) + cellPadding
-        };
-
-        saved[text] = data;
+async function runIntro(){
+  for(let i=0;i<phrases.length;i++){
+    await typePhrase(phrases[i]);
+    if(i < phrases.length-1){
+      await sleep(1400);
+      await erase();
     }
+  }
+  cursor.style.display="none";
+  actions.style.display="flex";
+}
 
-    const x = data.cell[1] * cellWidth + data.offsetX;
-    const y = data.cell[0] * cellHeight + data.offsetY;
+runIntro();
 
-    const el = document.createElement("div");
-    el.className = "fragment";
-    el.textContent = text;
-    el.style.left = x + "vw";
-    el.style.top = y + "vh";
+/* YES */
+yesBtn.onclick = async () => {
+  actions.style.display="none";
+  document.querySelector(".gate-inner").style.display="none";
 
-    document.body.appendChild(el);
-});
+  wrapper.style.display="block";
+  await video.play();
 
-localStorage.setItem(storageKey, JSON.stringify(saved));
+  video.onended = () => {
+    gate.style.opacity="0";
+    centerContent.style.opacity="1";
+    setTimeout(()=> gate.remove(),600);
+  };
+};
+
+/* NO */
+noBtn.onclick = async () => {
+  actions.style.display="none";
+  gateText.textContent="returning to script...";
+  await sleep(1000);
+  location.reload();
+};
 </script>
 
 </body>
