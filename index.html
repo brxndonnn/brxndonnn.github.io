@@ -100,6 +100,8 @@ canvas {
   border:1px solid #fff;
 }
 
+/* ===== VIDEO ===== */
+
 #videoWrapper{
   position: fixed;
   inset: 0;
@@ -111,7 +113,8 @@ canvas {
 #videoWrapper video{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain; /* no cropping on mobile */
+  background:#000;
 }
 </style>
 </head>
@@ -132,7 +135,7 @@ canvas {
     </div>
 
     <div class="gate-actions" id="gateActions">
-      <button id="gateYes" class="gate-btn">ENTER</button>
+      <button id="gateYes" class="gate-btn">YES</button>
       <button id="gateNo" class="gate-btn ghost">NO</button>
     </div>
   </div>
@@ -267,19 +270,35 @@ yesBtn.onclick = async () => {
   wrapper.style.display="block";
   await video.play();
 
-  video.onended = () => {
+  video.onended = async () => {
     gate.style.opacity="0";
     centerContent.style.opacity="1";
     setTimeout(()=> gate.remove(),600);
+
+    await sleep(1000);
+    centerContent.innerHTML = "<p>you made it out.</p>";
+
+    await sleep(2200);
+    centerContent.innerHTML = "<p>now you have to stay unscripted.</p>";
+
+    await sleep(2500);
+    centerContent.innerHTML = "<p>most people don't.</p>";
+
+    setInterval(() => {
+      centerContent.style.transform =
+        `translate(${(Math.random()-0.5)*2}px, ${(Math.random()-0.5)*2}px)`;
+    }, 120);
   };
 };
 
-/* NO */
+/* NO = hard blackout */
 noBtn.onclick = async () => {
   actions.style.display="none";
   gateText.textContent="returning to script...";
-  await sleep(1000);
-  location.reload();
+  await sleep(800);
+
+  document.body.innerHTML = "";
+  document.body.style.background = "#000";
 };
 </script>
 
