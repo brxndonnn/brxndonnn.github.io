@@ -36,7 +36,10 @@ canvas {
     font-size: 1.5rem;
     line-height: 1.6;
     margin: 0;
-    font-family: monospace;          /* ← added this line */
+    font-family: monospace;
+}
+.italic {
+    font-style: italic;
 }
 /* ===== GATE ===== */
 #gate{
@@ -172,10 +175,8 @@ function frame() {
   if (Math.random() < 0.08) glitch();
   requestAnimationFrame(frame);
 }
-frame();
-addEventListener("pointerdown", () => {
-  for (let i = 0; i < 4; i++) glitch();
-});
+frame(); // start once
+// Removed the old pointerdown extra glitches — constant via RAF now
 </script>
 <script>
 /* ===== GATE LOGIC ===== */
@@ -195,26 +196,35 @@ const wrapper = document.getElementById("videoWrapper");
 const video = document.getElementById("introVideo");
 const centerContent = document.getElementById("center");
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-async function typePhrase(p){
+async function typePhrase(p, isItalic = false){
   for(let i=0;i<p.length;i++){
-    gateText.textContent += p[i];
+    const span = document.createElement("span");
+    span.textContent = p[i];
+    if (isItalic) span.classList.add("italic");
+    gateText.appendChild(span);
     await sleep(60);
   }
 }
 async function erase(){
-  while(gateText.textContent.length){
-    gateText.textContent = gateText.textContent.slice(0,-1);
+  while(gateText.lastChild){
+    gateText.removeChild(gateText.lastChild);
     await sleep(30);
   }
 }
 async function runIntro(){
-  for(let i=0;i<phrases.length;i++){
-    await typePhrase(phrases[i]);
-    if(i < phrases.length-1){
-      await sleep(1400);
-      await erase();
-    }
-  }
+  await typePhrase(phrases[0], true); // hello italic
+  await sleep(1400);
+  await erase();
+
+  await typePhrase(phrases[1]); // normal
+  await sleep(1400);
+  await erase();
+
+  await typePhrase(phrases[2]); // normal
+  await sleep(1400);
+  await erase();
+
+  await typePhrase(phrases[3]); // normal
   cursor.style.display="none";
   actions.style.display="flex";
 }
@@ -230,14 +240,18 @@ yesBtn.onclick = async () => {
     centerContent.style.opacity="1";
     setTimeout(()=> gate.remove(),600);
     await sleep(1000);
+
     centerContent.innerHTML = "<p>you made it out.</p>";
     await sleep(2200);
+
     centerContent.innerHTML = "<p>now you have to stay unscripted.</p>";
     await sleep(2500);
-    centerContent.innerHTML = "<p>most people don't.</p>";
+
+    centerContent.innerHTML = "<p class='italic'>most people don't.</p>";
+
+    const p = centerContent.querySelector("p");
     setInterval(() => {
-      centerContent.style.transform =
-        `translate(${(Math.random()-0.5)*2}px, ${(Math.random()-0.5)*2}px)`;
+      p.style.transform = `translate(${(Math.random()-0.5)*2}px, ${(Math.random()-0.5)*2}px)`;
     }, 120);
   };
 };
