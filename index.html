@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>▌│█║▌║▌║</title>
-
 <style>
 body {
     margin: 0;
@@ -15,14 +14,12 @@ body {
     color: white;
     overflow: hidden;
 }
-
 canvas {
     position: fixed;
     inset: 0;
     z-index: 0;
     image-rendering: pixelated;
 }
-
 #center {
     position: absolute;
     top: 50%;
@@ -35,15 +32,13 @@ canvas {
     opacity: 0;
     transition: opacity .8s ease;
 }
-
 #center p {
     font-size: 1.5rem;
     line-height: 1.6;
     margin: 0;
+    font-family: monospace;          /* ← added this line */
 }
-
 /* ===== GATE ===== */
-
 #gate{
   position: fixed;
   inset: 0;
@@ -53,19 +48,16 @@ canvas {
   place-items: center;
   transition: opacity .6s ease;
 }
-
 .gate-inner{
   width: min(700px, 90vw);
   text-align: center;
   font-family: monospace;
   z-index: 2;
 }
-
 .gate-line{
   font-size: clamp(18px, 4vw, 28px);
   min-height: 2em;
 }
-
 .gate-cursor{
   display: inline-block;
   width: 0.6ch;
@@ -74,18 +66,15 @@ canvas {
   margin-left: 4px;
   animation: blink 1s step-end infinite;
 }
-
 @keyframes blink {
   50% { background: transparent; }
 }
-
 .gate-actions{
   margin-top: 20px;
   display: none;
   gap: 12px;
   justify-content: center;
 }
-
 .gate-btn{
   background:#fff;
   border:none;
@@ -93,15 +82,12 @@ canvas {
   cursor:pointer;
   font-weight:bold;
 }
-
 .gate-btn.ghost{
   background:transparent;
   color:#fff;
   border:1px solid #fff;
 }
-
 /* ===== VIDEO ===== */
-
 #videoWrapper{
   position: fixed;
   inset: 0;
@@ -109,7 +95,6 @@ canvas {
   display:none;
   z-index:1;
 }
-
 #videoWrapper video{
   width:100%;
   height:100%;
@@ -118,49 +103,36 @@ canvas {
 }
 </style>
 </head>
-
 <body>
-
 <canvas id="bg"></canvas>
-
-<div id="center">
-<p>ʷʰᵃᵗ'ˢ ᵗʰᵉ ᵖᵒⁱⁿᵗ?</p>
-</div>
-
+<div id="center"></div>
 <!-- GATE -->
 <div id="gate">
   <div class="gate-inner">
     <div class="gate-line">
       <span id="gateText"></span><span class="gate-cursor" id="gateCursor"></span>
     </div>
-
     <div class="gate-actions" id="gateActions">
       <button id="gateYes" class="gate-btn">YES</button>
       <button id="gateNo" class="gate-btn ghost">NO</button>
     </div>
   </div>
-
   <div id="videoWrapper">
     <video id="introVideo" preload="auto" playsinline>
       <source src="intro.mp4" type="video/mp4">
     </video>
   </div>
 </div>
-
 <script>
 /* ===== GLITCH BACKGROUND ===== */
-
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d", { alpha: false });
-
 let W, H, dpr;
 const isMobile = matchMedia("(pointer: coarse), (max-width: 768px)").matches;
-
 const TEAR_ALPHA = isMobile ? 0.45 : 0.22;
 const TEAR_HEIGHT = isMobile ? 5 : 3;
 const TEAR_FREQ = isMobile ? 0.75 : 0.55;
 const TEAR_SHIFT = isMobile ? 260 : 180;
-
 function resize() {
   dpr = Math.max(1, Math.min(2, devicePixelRatio || 1));
   W = Math.floor(innerWidth * dpr);
@@ -170,7 +142,6 @@ function resize() {
 }
 addEventListener("resize", resize);
 resize();
-
 function glitch() {
   const slices = 4 + (Math.random() * 7 | 0);
   for (let i = 0; i < slices; i++) {
@@ -179,18 +150,15 @@ function glitch() {
     const shift = (-TEAR_SHIFT/2 + Math.random() * TEAR_SHIFT) * dpr;
     ctx.drawImage(canvas, 0, y, W, h, shift, y, W, h);
   }
-
   if (Math.random() < TEAR_FREQ) {
     const y = Math.random() * H;
     ctx.fillStyle = `rgba(255,255,255,${TEAR_ALPHA})`;
     ctx.fillRect(0, y, W, TEAR_HEIGHT * dpr);
   }
 }
-
 function frame() {
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, W, H);
-
   if (Math.random() < 0.28) {
     const v = 190 + Math.random() * 60 | 0;
     ctx.fillStyle = `rgba(${v},${v},${v},0.12)`;
@@ -201,27 +169,22 @@ function frame() {
       Math.random() * 60 * dpr
     );
   }
-
   if (Math.random() < 0.08) glitch();
   requestAnimationFrame(frame);
 }
 frame();
-
 addEventListener("pointerdown", () => {
   for (let i = 0; i < 4; i++) glitch();
 });
 </script>
-
 <script>
 /* ===== GATE LOGIC ===== */
-
 const phrases = [
   "hello",
   "you weren't supposed to be here",
   "you just broke the script",
   "become unscripted?"
 ];
-
 const gateText = document.getElementById("gateText");
 const cursor = document.getElementById("gateCursor");
 const actions = document.getElementById("gateActions");
@@ -231,23 +194,19 @@ const gate = document.getElementById("gate");
 const wrapper = document.getElementById("videoWrapper");
 const video = document.getElementById("introVideo");
 const centerContent = document.getElementById("center");
-
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
 async function typePhrase(p){
   for(let i=0;i<p.length;i++){
     gateText.textContent += p[i];
     await sleep(60);
   }
 }
-
 async function erase(){
   while(gateText.textContent.length){
     gateText.textContent = gateText.textContent.slice(0,-1);
     await sleep(30);
   }
 }
-
 async function runIntro(){
   for(let i=0;i<phrases.length;i++){
     await typePhrase(phrases[i]);
@@ -259,48 +218,37 @@ async function runIntro(){
   cursor.style.display="none";
   actions.style.display="flex";
 }
-
 runIntro();
-
 /* YES */
 yesBtn.onclick = async () => {
   actions.style.display="none";
   document.querySelector(".gate-inner").style.display="none";
-
   wrapper.style.display="block";
   await video.play();
-
   video.onended = async () => {
     gate.style.opacity="0";
     centerContent.style.opacity="1";
     setTimeout(()=> gate.remove(),600);
-
     await sleep(1000);
     centerContent.innerHTML = "<p>you made it out.</p>";
-
     await sleep(2200);
     centerContent.innerHTML = "<p>now you have to stay unscripted.</p>";
-
     await sleep(2500);
     centerContent.innerHTML = "<p>most people don't.</p>";
-
     setInterval(() => {
       centerContent.style.transform =
         `translate(${(Math.random()-0.5)*2}px, ${(Math.random()-0.5)*2}px)`;
     }, 120);
   };
 };
-
 /* NO = hard blackout */
 noBtn.onclick = async () => {
   actions.style.display="none";
   gateText.textContent="returning to script...";
   await sleep(800);
-
   document.body.innerHTML = "";
   document.body.style.background = "#000";
 };
 </script>
-
 </body>
 </html>
